@@ -1,0 +1,51 @@
+server {
+  server_name robertakarobin.com robinakarobert.com www.robertakarobin.com www.robinakarobert.com;
+  listen 80;
+  return 301 https://www.robertakarobin.com$request_uri;
+}
+
+server {
+  server_name dev.robertakarobin.com;
+  listen 443 ssl; # managed by Certbot
+  ssl_certificate /etc/letsencrypt/live/dev.robertakarobin.com/fullchain.pem; # managed by Certbot
+  ssl_certificate_key /etc/letsencrypt/live/dev.robertakarobin.com/privkey.pem; # managed by Certbot
+  include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+  location / {
+    root /var/www/_main;
+    error_page 404 /error.html;
+    index index.html index.php;
+    try_files $uri $uri/ =404;
+    autoindex on;
+
+    location ~ \.php$ {
+      include snippets/fastcgi-php.conf;
+      fastcgi_pass unix:run/php/php7.0-fpm.sock;
+    }
+  }
+}
+
+server {
+  server_name dev.robertakarobin.com dev.robinakarobert.com;
+  listen 80;
+  return 301 https://dev.robertakarobin.com$request_uri;
+}
+
+server {
+  server_name ineedaprompt.com www.ineedaprompt.com;
+  listen 443 ssl; # managed by Certbot
+  ssl_certificate /etc/letsencrypt/live/ineedaprompt.com/fullchain.pem; # managed by Certbot
+  ssl_certificate_key /etc/letsencrypt/live/ineedaprompt.com/privkey.pem; # managed by Certbot
+  include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+  location / {
+    proxy_pass http://localhost:3001;
+    proxy_http_version 1.1;
+  }
+}
+
+server {
+  server_name ineedaprompt.com www.ineedaprompt.com;
+  listen 80;
+  return 301 https://$host$request_uri;
+}
