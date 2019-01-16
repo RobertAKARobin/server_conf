@@ -1,7 +1,28 @@
 server {
-  server_name robertakarobin.com robinakarobert.com www.robertakarobin.com www.robinakarobert.com;
-  listen 80;
+  server_name robertakarobin.com robinakarobert.com *.robertakarobin.com *.robinakarobert.com;
+  listen 80 default_server;
+  listen 443 ssl;
+  ssl_certificate /etc/letsencrypt/live/robertakarobin.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/robertakarobin.com/privkey.pem;
+  include /etc/letsencrypt/options-ssl-nginx.conf;
+  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
   return 301 https://www.robertakarobin.com$request_uri;
+}
+
+server {
+  server_name dev.robertakarobin.com dev.robinakarobert.com;
+  listen 80;
+  return 301 https://dev.robertakarobin.com$request_uri;
+}
+
+server {
+  server_name dev.robinakarobert.com;
+  listen 443 ssl; # managed by Certbot
+  ssl_certificate /etc/letsencrypt/live/dev.robertakarobin.com/fullchain.pem; # managed by Certbot
+  ssl_certificate_key /etc/letsencrypt/live/dev.robertakarobin.com/privkey.pem; # managed by Certbot
+  include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+  return 301 https://dev.robertakarobin.com$request_uri;
 }
 
 server {
@@ -23,12 +44,6 @@ server {
       fastcgi_pass unix:run/php/php7.0-fpm.sock;
     }
   }
-}
-
-server {
-  server_name dev.robertakarobin.com dev.robinakarobert.com;
-  listen 80;
-  return 301 https://dev.robertakarobin.com$request_uri;
 }
 
 server {
